@@ -16,16 +16,28 @@ class Data_Process extends API_Handler
         parent::__construct($target_endpoint);
     }
 
-    public function perform_cats_processing()
+    public function get_listing_data()
     {
-        $this->main_list = $this->get_listing_data();
-        $this->process_list_by_gender();
-        $this->perform_data_sorting();
+        $curl_results = $this->do_curl();
 
-        return $this->produce_output_for_cats();
+        if (!empty($curl_results) && !empty($curl_results["data"])) {
+            $this->main_list = $curl_results["data"];
+        }
+        else if (!empty($curl_results["error_message"])) {
+            throw new \Exception($curl_results["error_message"]);
+        }
+        else {
+            throw new \Exception("An error encountered when retrieving the data.");
+        }
     }
 
-    protected function produce_output_for_cats()
+    public function perform_pets_data_processing($pet_type)
+    {
+        $this->process_pets_list_by_gender($pet_type);
+        $this->perform_pets_data_sorting();
+    }
+
+    public function produce_html_output()
     {
         $output = "<h3> Male </h3>";
         $output .= "<ul>";
@@ -44,13 +56,20 @@ class Data_Process extends API_Handler
         return $output;
     }
 
-    protected function perform_data_sorting()
+    public function produce_array_output()
+    {
+        $output["male"] = $this->processed_list_male;
+        $output["female"] = $this->processed_list_female;
+        return $output;
+    }
+
+    protected function perform_pets_data_sorting()
     {
         sort($this->processed_list_male);
         sort($this->processed_list_female);
     }
 
-    protected function process_list_by_gender()
+    protected function process_pets_list_by_gender($pet_type)
     {
         $processed_list = array();
 
@@ -64,19 +83,19 @@ class Data_Process extends API_Handler
             }
 
             if (!empty($data["pets"]) && $current_gender == "male") {
-                $this->processed_list_male = array_merge($this->processed_list_male, $this->process_pet_cats($data["pets"]));
+                $this->processed_list_male = array_merge($this->processed_list_male, $this->process_pet_type($data["pets"], $pet_type));
             }
             else if (!empty($data["pets"]) && $current_gender == "female") {
-                $this->processed_list_female = array_merge($this->processed_list_female, $this->process_pet_cats($data["pets"]));
+                $this->processed_list_female = array_merge($this->processed_list_female, $this->process_pet_type($data["pets"], $pet_type));
             }
         }
     }
 
-    protected function process_pet_cats($pets)
+    protected function process_pet_type($pets, $pet_type)
     {
         $pet_names = array();
         foreach ($pets as $key => $pet) {
-            if (!empty($pet["type"] && strtolower($pet["type"]) == "cat")) {
+            if (!empty($pet["type"] && strtolower($pet["type"]) == $pet_type)) {
 
                 if (!empty($pet["name"])) {
                     $pet_names[] = $pet["name"];
@@ -87,21 +106,33 @@ class Data_Process extends API_Handler
         return $pet_names;
     }
 
-    protected function get_listing_data()
+    public function get_main_list()
     {
-        $curl_results = $this->do_curl();
-        $listing_data = false;
+        return $this->main_list;
+    }
 
-        if (!empty($curl_results) && !empty($curl_results["data"])) {
-            $listing_data = $curl_results["data"];
-        }
-        else if ($curl_results["error_message"]) {
-            throw new Exception($curl_results["error_message"]);
-        }
-        else {
-            throw new Exception("An error encountered when retrieving the data.");
-        }
+    public function set_main_list($main_list)
+    {
+        $this->main_list = $main_list;
+    }
 
-        return $listing_data;
+    public function get_processed_list_male()
+    {
+        return $this->processed_list_male;
+    }
+
+    public function set_processed_list_male($processed_list_male)
+    {
+        $this->processed_list_male = $processed_list_male;
+    }
+
+    public function get_processed_list_female()
+    {
+        return $this->processed_list_female;
+    }
+
+    public function set_processed_list_female($processed_list_female)
+    {
+        $this->processed_list_female = $processed_list_female;
     }
 }

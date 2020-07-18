@@ -7,11 +7,15 @@ $target_url = "http://agl-developer-test.azurewebsites.net/people.json";
 
 try {
     $data_process = new Data_Process($target_url);
-    $results = $data_process->perform_cats_processing();
+
+    // run the cURL to get the main listing
+    $data_process->get_listing_data();
+    $data_process->perform_pets_data_processing("cat");
+    $results = $data_process->produce_html_output();
 
     echo "<h2> Sorted Cats by Gender </h2>";
     echo $results;    
 }
-catch (Exception $e) {
+catch (\Exception $e) {
     echo $e->getMessage();
 }

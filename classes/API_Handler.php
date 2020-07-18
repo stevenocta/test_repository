@@ -12,7 +12,7 @@ class API_Handler
         }
     }
 
-    protected function do_curl()
+    public function do_curl()
     {
         $results = array();
 
@@ -32,7 +32,7 @@ class API_Handler
             
             $this->close_curl($conn);    
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             $results["error"] = true;
             $results["error_message"] = $e->getMessage();
         }
