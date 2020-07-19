@@ -18,7 +18,10 @@ E.g. with localhost as the root and directory "/test-repo/", please run "http://
 Please run this repository with PHP Unit 9 or above.
 
 The PHPUnit XML file is set up on the root directory of the application.
-Please navigate to the directory where the PHPUnit XML is lcoated and run "phpunit" from the command line / bash.
+Please navigate to the directory where the PHPUnit XML is located and run "phpunit" from the command line / bash.
+
+There are 6 assertions contained within the 2 test classes located on the "tests" folder.
+All of them should be a positive (successful) assertions with mocked data, they will not hit the API Endpoint directly for performance and testing practicality purposes.  
 
 
 ## Code Functions Overviews
