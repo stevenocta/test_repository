@@ -14,6 +14,13 @@ The application index.php will run automatically once the directory is executed 
 E.g. with localhost as the root and directory "/test-repo/", please run "http://localhost/test-repo/" to run the codes.
 
 
+## How to Run Testing with PHPUnit
+Please run this repository with PHP Unit 9 or above.
+
+The PHPUnit XML file is set up on the root directory of the application.
+Please navigate to the directory where the PHPUnit XML is lcoated and run "phpunit" from the command line / bash.
+
+
 ## Code Functions Overviews
 The main class to be utilised is the Data_Process class, which inherited the API_Handler cURL functionality.
 
